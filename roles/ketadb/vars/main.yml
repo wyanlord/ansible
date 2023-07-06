@@ -1,0 +1,3 @@
+---
+
+ketadb_config_list: "{{ ketadb_config_default | combine(ketadb_config, recursive=True) }}"

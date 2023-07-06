@@ -1,0 +1,10 @@
+- name: Restart mysql
+  become: true
+  systemd:
+    name: "{{ mysql_run_service }}"
+    state: restarted
+  notify:
+    - wait for mysql working
+
+- include_tasks:
+    file: status.yml

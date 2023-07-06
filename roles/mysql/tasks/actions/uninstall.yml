@@ -1,0 +1,33 @@
+- name: Disable mysql
+  become: yes
+  systemd:
+    name: "{{ mysql_run_service }}"
+    enabled: no
+  ignore_errors: true
+
+- name: Stop mysql
+  become: yes
+  systemd:
+    name: "{{ mysql_run_service }}"
+    state: stopped
+  ignore_errors: true
+
+- name: Force kill mysql
+  become: yes
+  shell: >-
+    ps -ef | grep -v grep | grep -w '{{ mysql_root_path }}/mysql.link/bin/mysqld' | awk '{print $2}' | xargs kill -9 || echo 0
+  ignore_errors: true
+
+- name: Ensure mysql associated directories removed
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/systemd/system/kmysql.service"
+    - "{{ mysql_conf_path }}"
+    - "{{ mysql_data_path }}"
+    - "{{ mysql_logs_path }}"
+    - "{{ mysql_root_path }}"
+    - "{{ mysql_pkgs_path }}"
+  ignore_errors: true

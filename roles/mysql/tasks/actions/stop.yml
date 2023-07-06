@@ -1,0 +1,10 @@
+- name: Stop mysql
+  become: true
+  systemd:
+    name: "{{ mysql_run_service }}"
+    state: stopped
+  notify:
+    - wait for mysql stopped
+
+- include_tasks:
+    file: status.yml

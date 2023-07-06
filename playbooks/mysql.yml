@@ -1,0 +1,29 @@
+- name: mysql
+  hosts: mysql
+  user: keta
+  gather_facts: no
+  vars:
+    mysql_install_file: /tmp/mysql-8.0.33.tar.xz
+    mysql_version: 8.0.33
+
+    mysql_username: keta
+    mysql_password: 654321
+    mysql_port: 13306
+
+    mysql_timezone: +08:00
+    mysql_character: utf8mb4
+    mysql_collation: utf8mb4_unicode_ci
+
+  tasks:
+    - name: mysql
+      include_role:
+        name: mysql
+      tags:
+        - install
+        - config
+        - enable
+        - restart
+        - start
+        - stop
+        - status
+        - uninstall

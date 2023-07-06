@@ -1,0 +1,35 @@
+---
+
+ketadb_install_file: /tmp/ketadb.tar.gz
+ketadb_version: 1.2.3
+
+ketadb_run_service: ketadb
+
+ketadb_root_path: /opt/ketaops/lib/ketadb
+ketadb_conf_path: /opt/ketaops/etc/ketadb
+ketadb_data_path: /opt/ketaops/var/ketadb
+ketadb_logs_path: /opt/ketaops/log/ketadb
+ketadb_pkgs_path: /opt/ketaops/package/ketadb
+
+ketadb_heap_size: 2g
+
+ketadb_config:
+  cluster.name: "default"
+
+ketadb_config_default:
+  cluster.name: "default"
+  network.host: "0.0.0.0"
+  http.port: 19200
+  transport.tcp.port: 19300
+
+  node.master: "true"
+  node.web: "true"
+  node.data: "true"
+
+  # discovery.zen.ping.unicast.hosts: []
+
+  keta.environment: "local"
+  keta.database.mysql.url: "127.0.0.1:13306"
+  keta.database.mysql.database: "ketadb"
+  keta.database.mysql.user: "keta"
+  keta.database.mysql.password: "654321"

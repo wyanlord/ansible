@@ -1,0 +1,46 @@
+- name: Check if mysql is installed
+  stat:
+    path: "{{ mysql_pkgs_path }}/mysql_{{ mysql_version }}.installed"
+  register: mysql_install_check
+
+- name: Ensure mysql not installed
+  fail: msg="{{ mysql_version }} is installed."
+  when: mysql_install_check.stat.exists
+
+- name: Ensure no mysql running
+  become: yes
+  shell: >-
+    ps -ef | grep -v grep | grep -w '{{ mysql_root_path }}/mysql.link/bin/mysqld' | awk '{print $2}' | xargs kill -9 || echo 0
+  ignore_errors: true
+
+- name: Ensure mysql associated directories exists
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: yes
+  loop:
+    - "{{ mysql_pkgs_path }}"
+    - "{{ mysql_root_path }}"
+    - "{{ mysql_root_path }}/{{ mysql_version }}"
+
+- name: Copy mysql install file into package directory
+  copy:
+    src: "{{ mysql_install_file }}"
+    dest: "{{ mysql_pkgs_path }}/mysql_{{ mysql_version }}.z"
+
+- name: Unarchive mysql install file to workspace
+  unarchive:
+    src: "{{ mysql_pkgs_path }}/mysql_{{ mysql_version }}.z"
+    dest: "{{ mysql_root_path }}/{{ mysql_version }}"
+    extra_opts: "--strip-components=1"
+    remote_src: yes
+    creates: "{{ mysql_root_path }}/{{ mysql_version }}/bin/mysqld"
+
+- name: Touch the tag file for checking installed
+  file:
+    path: "{{ mysql_pkgs_path }}/mysql_{{ mysql_version }}.installed"
+    state: touch

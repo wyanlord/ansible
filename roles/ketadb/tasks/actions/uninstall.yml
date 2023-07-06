@@ -1,0 +1,33 @@
+- name: Disable ketadb
+  become: yes
+  systemd:
+    name: "{{ ketadb_run_service }}"
+    enabled: no
+  ignore_errors: true
+
+- name: Stop ketadb
+  become: yes
+  systemd:
+    name: "{{ ketadb_run_service }}"
+    state: stopped
+  ignore_errors: true
+
+- name: Force kill ketadb
+  become: yes
+  shell: >-
+    ps -ef | grep -v grep | grep -w '{{ ketadb_root_path }}/ketadb.link/bin/keta' | awk '{print $2}' | xargs kill -9 || echo 0
+  ignore_errors: true
+
+- name: Ensure ketadb associated directories removed
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/systemd/system/{{ ketadb_run_service }}.service"
+    - "{{ ketadb_conf_path }}"
+    - "{{ ketadb_data_path }}"
+    - "{{ ketadb_logs_path }}"
+    - "{{ ketadb_root_path }}"
+    - "{{ ketadb_pkgs_path }}"
+  ignore_errors: true

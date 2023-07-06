@@ -1,0 +1,10 @@
+- name: Restart ketadb
+  become: true
+  systemd:
+    name: "{{ ketadb_run_service }}"
+    state: restarted
+  notify:
+    - wait for ketadb working
+
+- include_tasks:
+    file: status.yml
